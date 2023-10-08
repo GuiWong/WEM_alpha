@@ -42,6 +42,8 @@ typedef struct WEM_machine_struct
 	
 	WEM_clockable_component *frame_clocked[8];
 	
+	WEM_screen *screen;
+	
 	
 	
 }WEM_machine;
@@ -141,7 +143,7 @@ void WEM_write_bus(WEM_machine *machine,int bus_id,uint16_t adress, uint8_t data
 void WEM_machine_tick(WEM_machine *machine){
 
 
-	printf("MACHINE TICK : %d\n" , machine->ticks_elapsed);
+	//printf("MACHINE TICK : %d\n" , machine->ticks_elapsed);
 	
 	machine->ticks_elapsed+=1;
 	
@@ -165,7 +167,7 @@ void WEM_machine_tick(WEM_machine *machine){
 void WEM_frame_tick(WEM_machine *machine){
 
 
-	printf("FRAME TICK \n");//machine->ticks_elapsed);
+	//printf("FRAME TICK \n");//machine->ticks_elapsed);
 	
 	//machine->ticks_elapsed+=1;
 	

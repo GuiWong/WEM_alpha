@@ -1,0 +1,54 @@
+
+demo01:
+
+
+a demo of the tick() , frame_tick() 
+and prototype draw_frame()
+
+
+loadout:
+
+	4 bus modules
+	( 
+	  -ram (not used)
+	  -ram (not used)
+	  -ram (not used)
+	  -proto_ppu (0x2000 pixeldata) 	
+	  
+	)
+	
+	1 clocked module: (dummy logic component  )
+	
+	1 proto_screen (128 x 128)
+	
+	
+dummy logic component "program":
+
+
+	each tick():
+	
+	select next pixel 					pixelAdress = cycle % 0x2000
+	select color						color value = (cycle / 0x2000) % 256
+	
+	set one pixel in vram (the proto_ppu)			WEM_write_bus(machine,0,pixelAdress,color value)
+	
+
+
+controls:
+
+c: one machine tick()  [tick dummy logic component]
+f: one frame tick	[not used in this layout]
+d: draw_frame()	[prototyped, called from pointer in screen's controller (the proto_ppu) ]
+
+
+
+v:	toggle one tick per frame mode 	(starts off)
+	disable fask tick mode
+	
+b:	toggle fask tick mode			(starts off)
+	disable one tick per frame mode
+	
+n:	toggle Limit render to 60fpf		(starts off)
+
+
+
