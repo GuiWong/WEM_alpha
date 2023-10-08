@@ -20,8 +20,8 @@ enum
 
 	WEM_CF_USE_READ_POINTER = 1,
 	WEM_CF_USE_WRITE_POINTER= 2,
-	WEM_CF_KEEP_ABSOLUTE_ADRESS = 4,
-	WEM_CF_MIRROR_MODE_MODULO = 8		//adr_variant used as modulo on adr
+	WEM_CF_READ_ONLY = 4,
+	WEM_CF_WRITE_ONLY = 8		//adr_variant used as modulo on adr
 
 };
 

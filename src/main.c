@@ -3,13 +3,24 @@
 #include<SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+
+
+
 #include"component/component.h"
 #include"component/clockable.h"
 #include"component/bus_component.h"
 
-#include"machine/machine.h"
+//#include"machine/machine.h"
+//#include"machine/bus.c"
+
+
 #include"machine/machine.c"
+
 #include"machine/adress_logic.c"
+
+
+
+#include"component/component_builder.c"
 
 
 
@@ -95,7 +106,7 @@ void main()
 	bB.inactive_bits=0xf800;
 	
 	bC.active_bits=0x1000;
-	bC.inactive_bits=0x0000;
+	bC.inactive_bits=0xc000;
 	
 	bA.component = &compA;
 	bB.component = &compB;
@@ -107,6 +118,14 @@ void main()
 	
 	bus01.components_connected = 3;
 	
+	
+	
+	
+	
+	
+	
+	
+	
 	machine_test.bus[0]=&bus01;
 	
 	
@@ -116,6 +135,7 @@ void main()
 	
 	uint8_t data_test[128];
 	uint8_t data_test2[128];
+	uint8_t *data_test3 = (uint8_t*)malloc(256 * sizeof(uint8_t));
 	
 	
 	//data_test[37] = 0x69;
@@ -124,17 +144,33 @@ void main()
 	
 	memset(&data_test2,0x00,128);
 	
-	data_test[37] = 0x69;
+	memset(data_test3,0x11,256);
+	
+	//data_test[37] = 0x69;
+	
+	
+	
+	WEM_component *compD = WEM_buildcomp_ram_basic(256);
+	WEM_bus_component *bD= WEM_comp_connect_basic(&machine_test,compD,0,0x4000,0x0f00);
+	
+	compD->data = data_test3;
+	
 	
 	compA.data = &data_test[0];
 	compB.data = &data_test2[0];
 	
-	uint8_t read_test = WEM_read_bus( &machine_test,0,37);
 	
 	
-	WEM_write_bus(&machine_test,0,0x0420,0x27);
+	uint8_t read_test = WEM_read_bus( &machine_test,0,0x4012);
 	
-	read_test = WEM_read_bus( &machine_test,0,0x0420);
+	//uint8_t read_test = WEM_read_bus( &machine_test,0,0x0015);
+	
+	printf( "read data : %02x\n", read_test);
+	
+	
+	WEM_write_bus(&machine_test,0,0x4020,0x27);
+	
+	read_test = WEM_read_bus( &machine_test,0,0x4020);
 	
 	printf( "read data : %02x\n", read_test);
 	

@@ -19,7 +19,7 @@ enum
 };
 
 
-typedef struct WEM_bus_component
+typedef struct WEM_bus_component_struct
 {
 				
 	

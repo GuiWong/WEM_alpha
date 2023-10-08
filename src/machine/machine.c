@@ -2,9 +2,11 @@
 #include<stdlib.h>
 
 #include"adress_logic.h"
+#include"bus.c"
 
 
-WEM_bus_component* WEM_get_adressed_component(struct WEM_machine_struct *machine, int bus_id, uint16_t adress);
+
+/*
 
 typedef struct WEM_bus_struct
 {
@@ -24,6 +26,8 @@ typedef struct WEM_bus_struct
 	
 }WEM_bus;
 
+*/
+
 
 typedef struct WEM_machine_struct
 {
@@ -37,6 +41,37 @@ typedef struct WEM_machine_struct
 	
 	
 }WEM_machine;
+
+
+
+
+//--------------------connector-------------------------------------------
+
+
+
+
+WEM_bus_component* WEM_comp_connect_basic(WEM_machine *machine, WEM_component *component ,int bus_id,uint16_t active, uint16_t inactive)
+{
+
+	WEM_bus_component *bus_item = (WEM_bus_component*)malloc(sizeof(WEM_bus_component));
+	
+	bus_item->active_bits = active;
+	bus_item->inactive_bits = inactive;
+	
+	bus_item->flag = WEM_BUS_MODULO;
+	
+	bus_item->component = component;
+	
+	
+	
+	machine->bus[bus_id]->component[ machine->bus[bus_id]->components_connected ] = bus_item;
+	
+	machine->bus[bus_id]->components_connected+=1;
+	
+	return(bus_item);
+
+}
+
 
 
 
@@ -63,7 +98,7 @@ uint8_t WEM_read_bus(WEM_machine *machine,int bus_id,uint16_t adress)
 	WEM_bus_component *selected = WEM_get_adressed_component(machine,  bus_id,  adress);
 	
 	
-	uint16_t mapped_adr = WEM_get_local_adress(selected, machine->bus[bus_id]->adress_buffer);
+	uint16_t mapped_adr = WEM_get_local_adress(selected, machine->bus[bus_id]->adress_buffer);		//should i call a func in bus.c?
 	
 	return (WEM_read_comp(machine , selected->component, mapped_adr));
 
