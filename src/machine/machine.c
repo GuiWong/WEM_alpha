@@ -34,9 +34,13 @@ typedef struct WEM_machine_struct
 	
 	
 	uint32_t ticks_elapsed;
+	int clockable_count;
+	int frame_clockable_count;
 	
 	WEM_bus *bus[8];
 	WEM_clockable_component *clocked[8];
+	
+	WEM_clockable_component *frame_clocked[8];
 	
 	
 	
@@ -124,7 +128,6 @@ void WEM_write_bus(WEM_machine *machine,int bus_id,uint16_t adress, uint8_t data
 	WEM_write_comp(machine ,selected->component , mapped_adr , data);
 }
 
-/*
 
 
 
@@ -134,13 +137,65 @@ void WEM_write_bus(WEM_machine *machine,int bus_id,uint16_t adress, uint8_t data
 
 
 
-void WEM_machine_tick(WEM_machine *machine);
+
+void WEM_machine_tick(WEM_machine *machine){
 
 
-void WEM_default_tick(WEM_machine *machine , WEM_component *component);
+	printf("MACHINE TICK : %d\n" , machine->ticks_elapsed);
+	
+	machine->ticks_elapsed+=1;
+	
+	if (machine->clockable_count > 0)
+	{
+	
+		for(int i=0;i<machine->clockable_count;i++)
+		{
+		
+			machine->clocked[i]->tick_f_ptr(machine, machine->clocked[i]->component , machine->clocked[i]->cycle);
+			machine->clocked[i]->cycle +=1;
+		
+		}
+	
+	}
+
+}
 
 
-*/
+
+void WEM_frame_tick(WEM_machine *machine){
+
+
+	printf("FRAME TICK \n");//machine->ticks_elapsed);
+	
+	//machine->ticks_elapsed+=1;
+	
+	if (machine->frame_clockable_count > 0)
+	{
+	
+		for(int i=0;i<machine->frame_clockable_count;i++)
+		{
+		
+			machine->frame_clocked[i]->tick_f_ptr(machine, machine->frame_clocked[i]->component , machine->frame_clocked[i]->cycle);
+			machine->frame_clocked[i]->cycle +=1;
+		
+		}
+	
+	}
+
+}
+
+
+
+
+void WEM_default_tick(WEM_machine *machine , WEM_component *component,uint32_t current_tick)
+{
+
+	printf("one clockable component has no tick() pointer \n");
+
+}
+
+
+
 
 
 

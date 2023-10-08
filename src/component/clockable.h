@@ -2,10 +2,15 @@
 #include<stdlib.h>
 //#include"component.h"
 
-struct WEM_machine_struct;
+typedef struct WEM_machine_struct WEM_machine;
 
 typedef struct WEM_clockable_struct
 {
+
+				//		wait_frame:
+	int wait_frame;	//	if >0 : only call the tick() on complete frame
+	
+	
 				//		delay:
 	int delay;		//The tick function will only be called
 				//if machine_cycle % delay == 0
@@ -18,7 +23,7 @@ typedef struct WEM_clockable_struct
 //used to call specific tick() fuction from component
 //should be linked on creation
 				
-	void (*tick_f_ptr)(struct WEM_clockable_struct*,int); 
+	void (*tick_f_ptr)(WEM_machine* , WEM_component*,uint32_t); 
 	
 //		component:
 //Poiner to the component struct 

@@ -10,6 +10,8 @@
 #include"component/clockable.h"
 #include"component/bus_component.h"
 
+#include"component/graphic/default_PPU.c"
+
 //#include"machine/machine.h"
 //#include"machine/bus.c"
 
@@ -21,6 +23,12 @@
 
 
 #include"component/component_builder.c"
+
+
+
+
+
+SDL_Texture *screen_text;
 
 
 
@@ -80,6 +88,9 @@ void main()
 	create_window();
 	
 	
+	screen_text = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGB332,SDL_TEXTUREACCESS_STREAMING,128,128);
+	
+	
 //---------------------tests----------------------------------------
 	
 	WEM_bus bus01;
@@ -135,7 +146,7 @@ void main()
 	
 	uint8_t data_test[128];
 	uint8_t data_test2[128];
-	uint8_t *data_test3 = (uint8_t*)malloc(256 * sizeof(uint8_t));
+	uint8_t *data_test3 = (uint8_t*)malloc(128*128 * sizeof(uint8_t));
 	
 	
 	//data_test[37] = 0x69;
@@ -144,7 +155,11 @@ void main()
 	
 	memset(&data_test2,0x00,128);
 	
-	memset(data_test3,0x11,256);
+	memset(data_test3,0x03,128*32);
+	
+	memset(data_test3+128*32,0xa0,128*32);
+	memset(data_test3+128*64,0x1c,128*64);
+	
 	
 	//data_test[37] = 0x69;
 	
@@ -154,6 +169,23 @@ void main()
 	WEM_bus_component *bD= WEM_comp_connect_basic(&machine_test,compD,0,0x4000,0x0f00);
 	
 	compD->data = data_test3;
+	
+	WEM_clockable_component clk_test;
+	
+	clk_test.component = compD;
+	
+	//clk_test.tick_f_ptr = WEM_default_tick;
+	clk_test.tick_f_ptr = WEM_defaultPPU_tick;
+	
+	
+	
+	//machine_test.clocked[0] = &clk_test;
+	
+	machine_test.clockable_count = 0;
+	
+	machine_test.frame_clocked[0] = &clk_test;
+	
+	machine_test.frame_clockable_count = 1;
 	
 	
 	compA.data = &data_test[0];
@@ -173,6 +205,10 @@ void main()
 	read_test = WEM_read_bus( &machine_test,0,0x4020);
 	
 	printf( "read data : %02x\n", read_test);
+	
+	
+	
+	machine_test.ticks_elapsed = 0;
 	
 	
 	
@@ -196,6 +232,28 @@ void main()
 					run = SDL_FALSE;
 					break;
 						
+						
+				case SDL_KEYDOWN:
+				
+					switch(event.key.keysym.scancode)
+					{
+					
+						case SDL_SCANCODE_C:
+						
+							WEM_machine_tick(&machine_test);
+							break;
+						
+						case SDL_SCANCODE_F:
+						
+						
+							
+							WEM_frame_tick(&machine_test);
+							
+							SDL_RenderCopy(renderer,screen_text,NULL,&(SDL_Rect){0,0,256,256});
+							SDL_RenderPresent(renderer);
+							break;
+					
+					}
 			}
 			
 		}
@@ -206,10 +264,11 @@ void main()
 		
 		{
 		
-		SDL_RenderClear(renderer);
+		//SDL_RenderClear(renderer);
 		
 		
-		SDL_RenderPresent(renderer);
+		
+		//SDL_RenderPresent(renderer);
 		
 		}
 		

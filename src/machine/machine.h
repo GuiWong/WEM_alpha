@@ -38,7 +38,11 @@ uint8_t WEM_read_comp(WEM_machine *machine, WEM_component *component , uint16_t 
 
 void WEM_machine_tick(WEM_machine *machine);
 
-void WEM_default_tick(WEM_machine *machine , WEM_component *component);
+void WEM_frame_tick(WEM_machine *machine);
+
+void WEM_default_tick(WEM_machine *machine , WEM_component *component , uint32_t current_tick);
+
+
 
 
 
